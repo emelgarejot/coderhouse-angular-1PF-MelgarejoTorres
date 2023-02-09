@@ -1,0 +1,50 @@
+<mat-toolbar class="flex justify-between">
+  <h3>Editar Alumno</h3>
+  <button mat-icon-button mat-dialog-close>
+    <mat-icon>close</mat-icon>
+  </button>
+</mat-toolbar>
+<mat-dialog-content>
+  <form class="flex flex-col pt-4" [formGroup]="editForm">
+    <div class="flex flex-col ...">
+      <mat-form-field floatLabel="always" appearance="outline">
+        <mat-label>Id</mat-label>
+        <input matInput formControlName="id" />
+      </mat-form-field>
+
+      <mat-form-field floatLabel="always" appearance="outline">
+        <mat-label>Nombre</mat-label>
+        <input matInput formControlName="name" />
+      </mat-form-field>
+
+      <mat-form-field floatLabel="always" appearance="outline">
+        <mat-label>Apellidos</mat-label>
+        <input matInput formControlName="lastName" />
+      </mat-form-field>
+
+      <mat-form-field floatLabel="always" appearance="outline">
+        <mat-label>Country</mat-label>
+        <input matInput formControlName="country" />
+      </mat-form-field>
+
+      <div class="flex space-x-4 mb-4 justify-center">
+        <button
+          mat-raised-button
+          color="primary"
+          type="button"
+          (click)="save()"
+        >
+          Guardar
+        </button>
+        <button
+          mat-raised-button
+          color="accent"
+          type="button"
+          (click)="closeModal()"
+        >
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </form>
+</mat-dialog-content>
