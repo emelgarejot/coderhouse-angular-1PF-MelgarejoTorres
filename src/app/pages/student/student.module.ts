@@ -1,12 +1,13 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { PageListComponent } from './view/page/page-list/page-list.component';
+
 import { StudentRoutingModule } from './student-routing.module';
 import { SharedModule } from '../../shared/shared.module';
-import { FormComponent } from './view/component/form/form.component';
+import { StudentListComponent } from './student-list/student-list.component';
+import { StudentEditComponent } from './student-edit/student-edit.component';
 
 @NgModule({
-  declarations: [PageListComponent, FormComponent],
+  declarations: [StudentListComponent, StudentEditComponent],
   imports: [CommonModule, StudentRoutingModule, SharedModule],
 })
 export class StudentModule {}

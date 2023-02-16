@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { WelcomeComponent } from './core/views/components/welcome/welcome.component';
+import { WelcomeComponent } from './core/components/welcome/welcome.component';
 
 const routes: Routes = [
   {
@@ -11,7 +11,7 @@ const routes: Routes = [
   {
     path: 'alumnos',
     loadChildren: () =>
-      import('./modules/student/student.module').then(
+      import('./pages/student/student.module').then(
         (module) => module.StudentModule
       ),
   },

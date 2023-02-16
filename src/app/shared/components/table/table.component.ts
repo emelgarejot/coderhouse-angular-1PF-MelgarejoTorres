@@ -13,7 +13,7 @@ import {
   MatTable,
   MatTableDataSource,
 } from '@angular/material/table';
-import { MetaColumn } from '../../model/meta-column';
+import { MetaColumn } from '../../../_models/meta-column';
 
 @Component({
   selector: 'app-table',
