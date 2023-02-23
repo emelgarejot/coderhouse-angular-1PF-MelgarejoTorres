@@ -1,0 +1,44 @@
+<mat-toolbar class="flex justify-between">
+  <h3>{{ title }}</h3>
+  <button mat-icon-button mat-dialog-close>
+    <mat-icon>close</mat-icon>
+  </button>
+</mat-toolbar>
+<mat-dialog-content>
+  <form class="flex flex-col pt-4" [formGroup]="editForm">
+    <mat-form-field floatLabel="always" appearance="outline">
+      <mat-label>Id</mat-label>
+      <input matInput formControlName="id" />
+    </mat-form-field>
+
+    <mat-form-field floatLabel="always" appearance="outline">
+      <mat-label>Nombre</mat-label>
+      <input matInput formControlName="name" />
+    </mat-form-field>
+
+    <mat-form-field clas="mb-4" floatLabel="always" appearance="fill">
+      <mat-label>Selecciones Categoria</mat-label>
+      <mat-select formControlName="category">
+        <mat-option
+          [value]="category"
+          *ngFor="let category of categories$ | async"
+          >{{ category }}</mat-option
+        >
+      </mat-select>
+    </mat-form-field>
+
+    <div class="flex space-x-4 mb-4 justify-center">
+      <button mat-raised-button color="primary" type="button" (click)="save()">
+        Guardar
+      </button>
+      <button
+        mat-raised-button
+        color="accent"
+        type="button"
+        (click)="closeModal()"
+      >
+        Cancelar
+      </button>
+    </div>
+  </form>
+</mat-dialog-content>
