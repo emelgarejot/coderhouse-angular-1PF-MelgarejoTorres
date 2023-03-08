@@ -4,8 +4,10 @@ import { StudentService } from 'src/app/_services/student.service';
 import { MetaColumn } from '../../../_models/meta-column';
 import { Student } from '../../../_models/student.type';
 import { StudentEditComponent } from '../student-edit/student-edit.component';
-import { filter, map, Subscription } from 'rxjs';
+import { filter, map, Observable, Subscription } from 'rxjs';
 import { FormGroup, FormControl } from '@angular/forms';
+import { Session } from 'src/app/_models/session';
+import { SessionService } from '../../../core/services/session.service';
 
 const COLUMNS: MetaColumn[] = [
   {
@@ -38,10 +40,12 @@ export class StudentListComponent implements OnInit, OnDestroy {
   metaColumns = COLUMNS;
 
   searchForm: FormGroup;
+  session$!: Observable<Session>;
 
   constructor(
     public dialog: MatDialog,
-    private studenteService: StudentService
+    private studenteService: StudentService,
+    private sessionService: SessionService
   ) {
     this.searchForm = new FormGroup({
       filter: new FormControl(''),
@@ -61,6 +65,8 @@ export class StudentListComponent implements OnInit, OnDestroy {
       .subscribe((value) => {
         this.studenteService.filterStudents(value);
       });
+
+    this.session$ = this.sessionService.getSession();
   }
 
   openModal(row?: Student) {

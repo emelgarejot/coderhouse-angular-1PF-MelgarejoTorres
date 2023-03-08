@@ -23,4 +23,9 @@ export class SessionService {
   getSession(): Observable<Session> {
     return this.session$.asObservable();
   }
+
+  deleteSession() {
+    let session: Session = { isActive: false };
+    this.session$.next(session);
+  }
 }

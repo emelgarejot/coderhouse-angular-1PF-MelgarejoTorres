@@ -1,10 +1,13 @@
 <mat-sidenav-container>
-  <mat-sidenav [opened]="isOpened" mode="side">
+  <mat-sidenav [opened]="isOpened" mode="side" *ngIf="isActive">
     <app-menu></app-menu>
   </mat-sidenav>
 
   <mat-sidenav-content>
-    <app-header (onToggleMenu)="isOpened = !isOpened"></app-header>
+    <app-header
+      (onToggleMenu)="isOpened = !isOpened"
+      *ngIf="isActive"
+    ></app-header>
 
     <router-outlet></router-outlet>
   </mat-sidenav-content>

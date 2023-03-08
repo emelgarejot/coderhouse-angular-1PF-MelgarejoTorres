@@ -1,11 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { Course } from 'src/app/_models/course.type';
 import { MetaColumn } from 'src/app/_models/meta-column';
-import { map, Subscription } from 'rxjs';
+import { map, Subscription, Observable } from 'rxjs';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { CourseService } from 'src/app/_services/course.service';
 import { CourseEditComponent } from '../course-edit/course-edit.component';
+import { SessionService } from '../../../core/services/session.service';
+import { Session } from '../../../_models/session';
 
 const COLUMNS: MetaColumn[] = [
   {
@@ -33,7 +35,13 @@ export class CourseListComponent implements OnInit {
   metaColumns = COLUMNS;
   searchForm: FormGroup;
 
-  constructor(public dialog: MatDialog, private courseService: CourseService) {
+  session$!: Observable<Session>;
+
+  constructor(
+    public dialog: MatDialog,
+    private courseService: CourseService,
+    private sessionService: SessionService
+  ) {
     this.searchForm = new FormGroup({
       filter: new FormControl(''),
     });
@@ -52,6 +60,8 @@ export class CourseListComponent implements OnInit {
       .subscribe((value) => {
         this.courseService.filterCourses(value);
       });
+
+    this.session$ = this.sessionService.getSession();
   }
 
   openModal(row?: Course) {
