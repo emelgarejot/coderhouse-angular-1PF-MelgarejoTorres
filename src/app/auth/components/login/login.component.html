@@ -1,0 +1,33 @@
+<div class="grid place-content-center">
+  <div class="mt-12 login-form">
+    <h1 class="flex justify-center mb-4">Ingrese sus credenciales</h1>
+    <form class="flex flex-col pt-4" [formGroup]="loginForm">
+      <mat-form-field floatLabel="always" appearance="outline">
+        <mat-label>Usuario</mat-label>
+        <input matInput formControlName="username" />
+      </mat-form-field>
+
+      <mat-form-field floatLabel="always" appearance="outline">
+        <mat-label>Contraseña</mat-label>
+        <input type="password" matInput formControlName="password" />
+      </mat-form-field>
+
+      <div class="flex justify-center">
+        <mat-slide-toggle formControlName="isAdmin"
+          >Es administrador</mat-slide-toggle
+        >
+      </div>
+
+      <div class="flex justify-center mt-4">
+        <button
+          mat-raised-button
+          color="primary"
+          type="button"
+          (click)="login()"
+        >
+          Ingresar
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

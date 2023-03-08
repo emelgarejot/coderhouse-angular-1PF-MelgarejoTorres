@@ -5,7 +5,15 @@ import { WelcomeComponent } from './core/components/welcome/welcome.component';
 const routes: Routes = [
   {
     path: '',
+    pathMatch: 'full',
+
     component: WelcomeComponent,
+  },
+
+  {
+    path: 'auth',
+    loadChildren: () =>
+      import('./auth/auth.module').then((module) => module.AuthModule),
   },
 
   {

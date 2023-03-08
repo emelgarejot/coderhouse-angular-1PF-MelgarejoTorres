@@ -41,9 +41,8 @@ export class StudentService {
 
   deleteStudent(id: number) {
     let index = this.studentList.findIndex((s) => s.id == id);
-    console.log(index);
+
     if (index >= 0) {
-      console.log('entri');
       this.studentList.splice(index, 1);
       this.notifyChangeStudentList();
     }
