@@ -1,20 +1,14 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, of } from 'rxjs';
+import { BehaviorSubject, Observable, of, Subject } from 'rxjs';
 import { Course } from '../_models/course.type';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CourseService {
-  private courseList: Course[] = [
-    { id: 1, name: 'Java Script', category: 'Programación FrontEnd' },
-    { id: 2, name: 'Angular', category: 'Programación FrontEnd' },
-    { id: 3, name: 'Java', category: 'Programación BackEnd' },
-    { id: 4, name: 'SQL', category: 'Base de Datos' },
-    { id: 5, name: 'SCRUM', category: 'Agilidad' },
-    { id: 6, name: 'Design Thinking', category: 'Agilidad' },
-  ];
-
+  url = `${environment.ENDPOINT}/courses`;
   private categories: string[] = [
     'Programación FrontEnd',
     'Programación BackEnd',
@@ -23,13 +17,19 @@ export class CourseService {
     'Diseño',
   ];
 
-  private courseListSubject: BehaviorSubject<Course[]>;
+  private courseListSubject: Subject<Course[]>;
 
-  constructor() {
-    this.courseListSubject = new BehaviorSubject(this.courseList);
+  constructor(private http: HttpClient) {
+    this.courseListSubject = new Subject<Course[]>();
   }
 
-  getCourseList() {
+  refreshListCourse(): void {
+    this.getListCourse().subscribe((response) => {
+      this.courseListSubject.next(response);
+    });
+  }
+
+  getCourseListObservable() {
     return this.courseListSubject.asObservable();
   }
 
@@ -37,44 +37,34 @@ export class CourseService {
     return of(this.categories);
   }
 
-  deleteCourse(id: number) {
-    let index = this.courseList.findIndex((s) => s.id == id);
-
-    if (index >= 0) {
-      this.courseList.splice(index, 1);
-      this.notifyChangeStudentList();
-    }
+  getListCourse(): Observable<Course[]> {
+    return this.http.get<Course[]>(this.url);
   }
 
-  addStudent(course: Course) {
-    this.courseList.push(course);
-    this.notifyChangeStudentList();
+  addStudent(course: Course): Observable<Course> {
+    return this.http.post<Course>(this.url, course);
+  }
+
+  updateStudent(course: Course): Observable<Course> {
+    return this.http.put<Course>(`${this.url}/${course.id}`, course);
+  }
+
+  deleteCourse(id: number): Observable<Course> {
+    return this.http.delete<Course>(`${this.url}/${id}`);
   }
 
   filterCourses(criteria: string) {
-    let copyCourseList = [...this.courseList];
+    this.getListCourse().subscribe((courses) => {
+      let copyCourseList = [...courses];
 
-    let filteredCourseList: Course[] = copyCourseList.filter(
-      (course) =>
-        course.id.toString().includes(criteria) ||
-        course.name.toUpperCase().includes(criteria) ||
-        course.category.toUpperCase().includes(criteria)
-    );
+      let filteredCourseList: Course[] = copyCourseList.filter(
+        (course) =>
+          course.id.toString().includes(criteria) ||
+          course.name.toUpperCase().includes(criteria) ||
+          course.category.toUpperCase().includes(criteria)
+      );
 
-    this.courseListSubject.next(filteredCourseList);
-  }
-
-  updateStudent(course: Course) {
-    let courseUpdate = this.courseList.find((s) => s.id == course.id);
-
-    if (courseUpdate) {
-      courseUpdate.name = course.name;
-      courseUpdate.category = course.category;
-
-      this.notifyChangeStudentList();
-    }
-  }
-  private notifyChangeStudentList() {
-    this.courseListSubject.next(this.courseList);
+      this.courseListSubject.next(filteredCourseList);
+    });
   }
 }

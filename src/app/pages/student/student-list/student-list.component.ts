@@ -54,10 +54,14 @@ export class StudentListComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.subscription = this.studenteService
-      .getStudentList()
+      .getStudentListObservable()
       .subscribe((response) => {
         this.dataTable = [...response];
       });
+
+    // Cargamos valor incial de la lista estudiantes
+
+    this.studenteService.refreshListStudent();
 
     // Utilizamos operador map para eliminar espacio e blanco y transformarlo en mayuscula
     this.searchForm.controls['filter'].valueChanges
@@ -79,7 +83,9 @@ export class StudentListComponent implements OnInit, OnDestroy {
 
   delete(row: Student) {
     let idDelete = row.id;
-    this.studenteService.deleteStudent(idDelete);
+    this.studenteService
+      .deleteStudent(idDelete)
+      .subscribe((response) => this.studenteService.refreshListStudent());
   }
 
   ngOnDestroy(): void {

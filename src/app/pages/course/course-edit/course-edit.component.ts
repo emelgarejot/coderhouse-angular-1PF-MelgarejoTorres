@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Observable } from 'rxjs';
 import { Course } from 'src/app/_models/course.type';
@@ -22,7 +22,7 @@ export class CourseEditComponent implements OnInit {
   ) {
     this.editForm = new FormGroup({
       id: new FormControl(),
-      name: new FormControl(),
+      name: new FormControl('', Validators.minLength(2)),
       category: new FormControl(),
     });
   }
@@ -37,6 +37,7 @@ export class CourseEditComponent implements OnInit {
       this.editForm.controls['category'].setValue(this.data.category);
     } else {
       this.isEdit = false;
+      this.editForm.controls['id'].disable();
       this.title = 'Registrar Curso';
     }
 
@@ -46,9 +47,13 @@ export class CourseEditComponent implements OnInit {
 
   save() {
     if (this.isEdit) {
-      this.courseService.updateStudent(this.editForm.getRawValue());
+      this.courseService
+        .updateStudent(this.editForm.getRawValue())
+        .subscribe((response) => this.courseService.refreshListCourse());
     } else {
-      this.courseService.addStudent(this.editForm.getRawValue());
+      this.courseService
+        .addStudent(this.editForm.getRawValue())
+        .subscribe((response) => this.courseService.refreshListCourse());
     }
 
     this.closeModal();

@@ -1,19 +1,14 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subject, Observable, of } from 'rxjs';
+import { environment } from 'src/environments/environment';
 import { Student } from '../_models/student.type';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root',
 })
 export class StudentService {
-  private studentList: Student[] = [
-    { id: 1, name: 'Miguel', lastName: 'Campos', country: 'Chile' },
-    { id: 2, name: 'Carlos', lastName: 'Cardenas', country: 'Peru' },
-    { id: 3, name: 'Jose', lastName: 'Montiel', country: 'Argentina' },
-    { id: 4, name: 'Carmen', lastName: 'Navas', country: 'Costa Rica' },
-    { id: 5, name: 'Radamel', lastName: 'Falcao', country: 'Colombia' },
-    { id: 6, name: 'Luis', lastName: 'Suarez', country: 'Uruguay' },
-  ];
+  url = `${environment.ENDPOINT}/students`;
 
   private countries: string[] = [
     'Chile',
@@ -24,60 +19,55 @@ export class StudentService {
     'Uruguay',
   ];
 
-  private studentListSubject: BehaviorSubject<Student[]>;
-  private countriesSubject: BehaviorSubject<string[]>;
-  constructor() {
-    this.studentListSubject = new BehaviorSubject(this.studentList);
-    this.countriesSubject = new BehaviorSubject(this.countries);
+  private studentListSubject: Subject<Student[]>;
+
+  constructor(private http: HttpClient) {
+    this.studentListSubject = new Subject<Student[]>();
   }
 
-  getStudentList() {
+  refreshListStudent(): void {
+    this.getListStudent().subscribe((response) =>
+      this.studentListSubject.next(response)
+    );
+  }
+
+  getStudentListObservable() {
     return this.studentListSubject.asObservable();
   }
 
   getCountries() {
-    return this.countriesSubject.asObservable();
+    return of(this.countries);
   }
 
-  deleteStudent(id: number) {
-    let index = this.studentList.findIndex((s) => s.id == id);
-
-    if (index >= 0) {
-      this.studentList.splice(index, 1);
-      this.notifyChangeStudentList();
-    }
+  getListStudent(): Observable<Student[]> {
+    return this.http.get<Student[]>(this.url);
   }
 
-  addStudent(student: Student) {
-    this.studentList.push(student);
-    this.notifyChangeStudentList();
+  addStudent(student: Student): Observable<Student> {
+    return this.http.post<Student>(this.url, student);
+  }
+
+  updateStudent(student: Student): Observable<Student> {
+    return this.http.put<Student>(`${this.url}/${student.id}`, student);
+  }
+
+  deleteStudent(id: number): Observable<Student> {
+    return this.http.delete<Student>(`${this.url}/${id}`);
   }
 
   filterStudents(criteria: string) {
-    let copyStudentList = [...this.studentList];
+    this.getListStudent().subscribe((students) => {
+      let copyStudentList = [...students];
 
-    let filteredStudentList: Student[] = copyStudentList.filter(
-      (student) =>
-        student.id.toString().includes(criteria) ||
-        student.name.toUpperCase().includes(criteria) ||
-        student.lastName.toUpperCase().includes(criteria) ||
-        student.country.toUpperCase().includes(criteria)
-    );
+      let filteredStudentList: Student[] = copyStudentList.filter(
+        (student) =>
+          student.id.toString().includes(criteria) ||
+          student.name.toUpperCase().includes(criteria) ||
+          student.lastName.toUpperCase().includes(criteria) ||
+          student.country.toUpperCase().includes(criteria)
+      );
 
-    this.studentListSubject.next(filteredStudentList);
-  }
-
-  updateStudent(student: Student) {
-    let studentUpdate = this.studentList.find((s) => s.id == student.id);
-
-    if (studentUpdate) {
-      studentUpdate.name = student.name;
-      studentUpdate.lastName = student.lastName;
-      studentUpdate.country = student.country;
-      this.notifyChangeStudentList();
-    }
-  }
-  private notifyChangeStudentList() {
-    this.studentListSubject.next(this.studentList);
+      this.studentListSubject.next(filteredStudentList);
+    });
   }
 }

@@ -39,6 +39,7 @@ export class StudentEditComponent implements OnInit {
       this.editForm.controls['country'].setValue(this.data.country);
     } else {
       this.isEdit = false;
+      this.editForm.controls['id'].disable();
       this.title = 'Registrar Alumno';
     }
 
@@ -48,9 +49,13 @@ export class StudentEditComponent implements OnInit {
 
   save() {
     if (this.isEdit) {
-      this.studenteService.updateStudent(this.editForm.getRawValue());
+      this.studenteService
+        .updateStudent(this.editForm.getRawValue())
+        .subscribe((response) => this.studenteService.refreshListStudent());
     } else {
-      this.studenteService.addStudent(this.editForm.getRawValue());
+      this.studenteService
+        .addStudent(this.editForm.getRawValue())
+        .subscribe((response) => this.studenteService.refreshListStudent());
     }
 
     this.closeModal();

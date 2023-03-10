@@ -49,10 +49,14 @@ export class CourseListComponent implements OnInit {
 
   ngOnInit(): void {
     this.subscription = this.courseService
-      .getCourseList()
+      .getCourseListObservable()
       .subscribe((response) => {
         this.dataTable = [...response];
       });
+
+    // Cargamos valor inicial de la lista estudiantes
+
+    this.courseService.refreshListCourse();
 
     // Utilizamos operador map para eliminar espacio e blanco y transformarlo en mayuscula
     this.searchForm.controls['filter'].valueChanges
@@ -74,7 +78,9 @@ export class CourseListComponent implements OnInit {
 
   delete(row: Course) {
     let idDelete = row.id;
-    this.courseService.deleteCourse(idDelete);
+    this.courseService
+      .deleteCourse(idDelete)
+      .subscribe((response) => this.courseService.refreshListCourse());
   }
 
   ngOnDestroy(): void {
