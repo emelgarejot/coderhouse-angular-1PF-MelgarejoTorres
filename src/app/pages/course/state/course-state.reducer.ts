@@ -31,5 +31,17 @@ export const reducer = createReducer(
       courses: courses,
     };
     return newState;
+  }),
+
+  on(CourseStateActions.createCourseState, (state, { course }) => {
+    return state;
+  }),
+
+  on(CourseStateActions.updateCourseState, (state, { course }) => {
+    return state;
+  }),
+
+  on(CourseStateActions.deleteCourseState, (state, { idCourse }) => {
+    return state;
   })
 );

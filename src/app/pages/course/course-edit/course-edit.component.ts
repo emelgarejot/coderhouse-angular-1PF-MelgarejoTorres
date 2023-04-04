@@ -1,9 +1,14 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { Course } from 'src/app/_models/course.type';
 import { CourseService } from 'src/app/_services/course.service';
+import {
+  createCourseState,
+  updateCourseState,
+} from '../state/course-state.actions';
 
 @Component({
   selector: 'app-course-edit',
@@ -18,7 +23,8 @@ export class CourseEditComponent implements OnInit {
   constructor(
     private dialogRef: MatDialogRef<CourseEditComponent>,
     @Inject(MAT_DIALOG_DATA) public data: Course,
-    private courseService: CourseService
+    private courseService: CourseService,
+    private store: Store
   ) {
     this.editForm = new FormGroup({
       id: new FormControl(),
@@ -47,13 +53,13 @@ export class CourseEditComponent implements OnInit {
 
   save() {
     if (this.isEdit) {
-      this.courseService
-        .updateStudent(this.editForm.getRawValue())
-        .subscribe((response) => this.courseService.refreshListCourse());
+      this.store.dispatch(
+        updateCourseState({ course: this.editForm.getRawValue() })
+      );
     } else {
-      this.courseService
-        .addStudent(this.editForm.getRawValue())
-        .subscribe((response) => this.courseService.refreshListCourse());
+      this.store.dispatch(
+        createCourseState({ course: this.editForm.getRawValue() })
+      );
     }
 
     this.closeModal();

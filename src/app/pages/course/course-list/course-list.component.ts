@@ -13,7 +13,11 @@ import {
   selectLoadingCourses,
   selectloadedCourses,
 } from '../state/course-state.selectors';
-import { loadCourseState, loadedCourses } from '../state/course-state.actions';
+import {
+  deleteCourseState,
+  loadCourseState,
+  loadedCourses,
+} from '../state/course-state.actions';
 
 const COLUMNS: MetaColumn[] = [
   {
@@ -72,10 +76,6 @@ export class CourseListComponent implements OnInit {
     this.loading$ = this.store.select(selectLoadingCourses);
     this.store.dispatch(loadCourseState());
 
-    this.courseService.getListCourse().subscribe((courses) => {
-      this.store.dispatch(loadedCourses({ courses: courses }));
-    });
-
     this.store.select(selectloadedCourses).subscribe((courses) => {
       this.dataTable = [...courses];
     });
@@ -100,9 +100,7 @@ export class CourseListComponent implements OnInit {
 
   delete(row: Course) {
     let idDelete = row.id;
-    this.courseService
-      .deleteCourse(idDelete)
-      .subscribe((response) => this.courseService.refreshListCourse());
+    this.store.dispatch(deleteCourseState({ idCourse: idDelete }));
   }
 
   ngOnDestroy(): void {

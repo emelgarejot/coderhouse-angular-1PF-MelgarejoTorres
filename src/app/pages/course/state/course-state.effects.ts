@@ -1,19 +1,62 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-
-import { concatMap } from 'rxjs/operators';
-import { Observable, EMPTY } from 'rxjs';
+import { concatMap, map } from 'rxjs/operators';
 import * as CourseStateActions from './course-state.actions';
+import { CourseService } from '../../../_services/course.service';
+import { Course } from 'src/app/_models/course.type';
 
 @Injectable()
-export class CourseStateEffects {
-  loadCourseStates$ = createEffect(() => {
+export class CourseEffects {
+  constructor(
+    private courseService: CourseService,
+    private actions$: Actions
+  ) {}
+
+  loadCourses$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(CourseStateActions.loadCourseState),
-      /** An EMPTY observable only emits completion. Replace with your own observable API request */
-      concatMap(() => EMPTY as Observable<{ type: string }>)
+      concatMap(() => {
+        return this.courseService
+          .getListCourse()
+          .pipe(
+            map((courses) =>
+              CourseStateActions.loadedCourses({ courses: courses })
+            )
+          );
+      })
     );
   });
 
-  constructor(private actions$: Actions) {}
+  createCourse$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(CourseStateActions.createCourseState),
+      concatMap(({ course }) => {
+        return this.courseService
+          .addCourse(course)
+          .pipe(map((courseCreated) => CourseStateActions.loadCourseState()));
+      })
+    );
+  });
+
+  updateCourse$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(CourseStateActions.updateCourseState),
+      concatMap(({ course }) => {
+        return this.courseService
+          .updateCourse(course)
+          .pipe(map((courseUpdated) => CourseStateActions.loadCourseState()));
+      })
+    );
+  });
+
+  deleteCourse$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(CourseStateActions.deleteCourseState),
+      concatMap(({ idCourse }) => {
+        return this.courseService
+          .deleteCourse(idCourse)
+          .pipe(map((courseDeleted) => CourseStateActions.loadCourseState()));
+      })
+    );
+  });
 }

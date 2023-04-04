@@ -41,11 +41,11 @@ export class CourseService {
     return this.http.get<Course[]>(this.url);
   }
 
-  addStudent(course: Course): Observable<Course> {
+  addCourse(course: Course): Observable<Course> {
     return this.http.post<Course>(this.url, course);
   }
 
-  updateStudent(course: Course): Observable<Course> {
+  updateCourse(course: Course): Observable<Course> {
     return this.http.put<Course>(`${this.url}/${course.id}`, course);
   }
 
