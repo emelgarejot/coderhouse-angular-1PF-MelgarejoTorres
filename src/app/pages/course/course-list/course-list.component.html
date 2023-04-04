@@ -21,6 +21,10 @@
       </ng-container>
     </div>
   </div>
+
+  <div *ngIf="loading$ | async">
+    <h1>Cargando cursos ...</h1>
+  </div>
   <app-table [dataTable]="dataTable" [metaColumns]="metaColumns">
     <ng-container matColumnDef="actions">
       <th mat-header-cell *matHeaderCellDef appFontSizeCustom>Acciones</th>

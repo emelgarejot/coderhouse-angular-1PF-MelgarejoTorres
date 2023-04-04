@@ -8,6 +8,10 @@ import { AppComponent } from './app.component';
 import { CoreModule } from './core/core.module';
 import { AppRoutingModule } from './app-routing.module';
 import { HttpClientModule } from '@angular/common/http';
+import { StoreModule } from '@ngrx/store';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { environment } from '../environments/environment';
+import { EffectsModule } from '@ngrx/effects';
 
 @NgModule({
   declarations: [AppComponent],
@@ -19,6 +23,12 @@ import { HttpClientModule } from '@angular/common/http';
     BrowserAnimationsModule,
     MatSidenavModule,
     HttpClientModule,
+    StoreModule.forRoot({}, {}),
+    StoreDevtoolsModule.instrument({
+      maxAge: 25,
+      logOnly: environment.production,
+    }),
+    //EffectsModule.forRoot([]),
   ],
   providers: [],
   bootstrap: [AppComponent],

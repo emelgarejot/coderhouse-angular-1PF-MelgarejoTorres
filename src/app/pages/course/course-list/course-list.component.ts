@@ -8,6 +8,12 @@ import { CourseService } from 'src/app/_services/course.service';
 import { CourseEditComponent } from '../course-edit/course-edit.component';
 import { SessionService } from '../../../core/services/session.service';
 import { Session } from '../../../_models/session';
+import { Store } from '@ngrx/store';
+import {
+  selectLoadingCourses,
+  selectloadedCourses,
+} from '../state/course-state.selectors';
+import { loadCourseState, loadedCourses } from '../state/course-state.actions';
 
 const COLUMNS: MetaColumn[] = [
   {
@@ -34,13 +40,15 @@ export class CourseListComponent implements OnInit {
   subscription?: Subscription;
   metaColumns = COLUMNS;
   searchForm: FormGroup;
+  loading$!: Observable<boolean>;
 
   session$!: Observable<Session>;
 
   constructor(
     public dialog: MatDialog,
     private courseService: CourseService,
-    private sessionService: SessionService
+    private sessionService: SessionService,
+    private store: Store
   ) {
     this.searchForm = new FormGroup({
       filter: new FormControl(''),
@@ -48,6 +56,7 @@ export class CourseListComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    /*
     this.subscription = this.courseService
       .getCourseListObservable()
       .subscribe((response) => {
@@ -57,6 +66,19 @@ export class CourseListComponent implements OnInit {
     // Cargamos valor inicial de la lista estudiantes
 
     this.courseService.refreshListCourse();
+
+    */
+
+    this.loading$ = this.store.select(selectLoadingCourses);
+    this.store.dispatch(loadCourseState());
+
+    this.courseService.getListCourse().subscribe((courses) => {
+      this.store.dispatch(loadedCourses({ courses: courses }));
+    });
+
+    this.store.select(selectloadedCourses).subscribe((courses) => {
+      this.dataTable = [...courses];
+    });
 
     // Utilizamos operador map para eliminar espacio e blanco y transformarlo en mayuscula
     this.searchForm.controls['filter'].valueChanges
